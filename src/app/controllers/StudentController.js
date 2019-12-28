@@ -1,13 +1,28 @@
+import * as Yup from 'yup';
 import Student from '../models/Student';
 
 class StudentController {
     async store(req, res) {
+        const schema = Yup.object().shape({
+            name: Yup.string().required(),
+            years: Yup.number().required(),
+            email: Yup.string()
+                .email()
+                .required(),
+            height: Yup.number().required(),
+            weight: Yup.number().required(),
+        });
+
+        if (!(await schema.isValid(req.body))) {
+            return res.status(400).json({ error: 'Input is not valid' });
+        }
+
         const userExist = await Student.findOne({
             where: { email: req.body.email },
         });
 
         if (userExist) {
-            return res.status(401).json({ error: 'User already exist' });
+            return res.status(400).json({ error: 'User already exist' });
         }
 
         const student = await Student.create(req.body);
@@ -15,6 +30,16 @@ class StudentController {
     }
 
     async update(req, res) {
+        const schema = Yup.object().shape({
+            email: Yup.string()
+                .email()
+                .required(),
+        });
+
+        if (!(await schema.isValid(req.body))) {
+            return res.status(400).json({ error: 'Input is not valid' });
+        }
+
         const { email } = req.body;
         const newInfo = req.body.new;
         const {
@@ -38,7 +63,7 @@ class StudentController {
                     user.update({ email: newEmail });
                 } else {
                     return res
-                        .status(401)
+                        .status(400)
                         .json({ error: 'Email already used on another user' });
                 }
             }
@@ -63,7 +88,7 @@ class StudentController {
                 user,
             });
         } catch (err) {
-            return res.status(401).json({ error: 'Student not found' });
+            return res.status(400).json({ error: 'Student not found' });
         }
     }
 }
