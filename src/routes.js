@@ -16,7 +16,9 @@ routes.post('/sessions', SessionController.store);
 routes.use(auth);
 
 routes.post('/students', StudentController.store);
-routes.put('/students', StudentController.update);
+routes.put('/students/:id', StudentController.update);
+routes.delete('/students/:id', StudentController.delete);
+routes.get('/students', StudentController.list);
 
 routes.post('/plans', PlanController.store);
 routes.get('/plans', PlanController.list);
