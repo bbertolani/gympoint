@@ -2,15 +2,33 @@ import * as Yup from 'yup';
 import Student from '../models/Student';
 
 class StudentController {
+    async list(req, res) {
+        const student = await Student.findAll();
+
+        if (student.length === 0) {
+            return res.status(400).json({ msg: 'No users available' });
+        }
+
+        return res.json(student);
+    }
+
     async store(req, res) {
         const schema = Yup.object().shape({
-            name: Yup.string().required(),
-            years: Yup.number().required(),
+            name: Yup.string()
+                .min(8)
+                .required(),
+            years: Yup.number()
+                .min(2)
+                .required(),
             email: Yup.string()
                 .email()
                 .required(),
-            height: Yup.number().required(),
-            weight: Yup.number().required(),
+            height: Yup.number()
+                .min(2)
+                .required(),
+            weight: Yup.number()
+                .min(2)
+                .required(),
         });
 
         if (!(await schema.isValid(req.body))) {
@@ -30,66 +48,89 @@ class StudentController {
     }
 
     async update(req, res) {
-        const schema = Yup.object().shape({
-            email: Yup.string()
-                .email()
-                .required(),
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ msg: 'No data' });
+        }
+
+        const { id } = req.params;
+        const params = Yup.object().shape({
+            id: Yup.number().required(),
         });
 
-        if (!(await schema.isValid(req.body))) {
+        if (!(await params.isValid(req.params))) {
             return res.status(400).json({ error: 'Input is not valid' });
         }
 
-        const { email } = req.body;
-        const newInfo = req.body.new;
-        const {
-            email: newEmail,
-            name: newName,
-            years: newYears,
-            weight: newWeight,
-            height: newHeight,
-        } = newInfo;
+        const arg = Yup.object().shape({
+            name: Yup.string().min(8),
+            years: Yup.number().min(2),
+            email: Yup.string().email(),
+            height: Yup.number().min(2),
+            weight: Yup.number().min(2),
+        });
 
-        try {
-            const user = await Student.findOne({
-                where: { email },
+        if (!(await arg.isValid(req.body))) {
+            return res.status(400).json({
+                msg: 'Invalid arguments',
             });
-
-            if (email !== newEmail && newEmail !== undefined) {
-                const userExist = await Student.findOne({
-                    where: { email: newEmail },
-                });
-                if (userExist == null) {
-                    user.update({ email: newEmail });
-                } else {
-                    return res
-                        .status(400)
-                        .json({ error: 'Email already used on another user' });
-                }
-            }
-
-            if (newName !== user.name) {
-                user.update({ name: newName });
-            }
-
-            if (newHeight !== user.height) {
-                user.update({ height: newHeight });
-            }
-
-            if (newWeight !== user.weight) {
-                user.update({ weight: newWeight });
-            }
-
-            if (newYears !== user.years) {
-                user.update({ years: newYears });
-            }
-
-            return res.json({
-                user,
-            });
-        } catch (err) {
-            return res.status(400).json({ error: 'Student not found' });
         }
+
+        const { email: newEmail, name: newName } = req.body;
+
+        const student = await Student.findByPk(id);
+        if (student === null) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+        const { email, name } = student;
+
+        if (newEmail) {
+            const searchEmail = await Student.findOne({
+                where: { email: newEmail },
+            });
+            if (searchEmail) {
+                return res.status(400).json({ error: 'Email already in use' });
+            }
+        }
+
+        if (newName) {
+            const searchName = await student.findOne({
+                where: { name: newName },
+            });
+            if (searchName) {
+                return res.status(400).json({ error: 'Name already in use' });
+            }
+        }
+
+        student.update(req.body);
+
+        return res.json({
+            student,
+        });
+    }
+
+    async delete(req, res) {
+        const { id } = req.params;
+        const params = Yup.object().shape({
+            id: Yup.number().required(),
+        });
+
+        if (!(await params.isValid(req.params))) {
+            return res.status(400).json({ error: 'Input is not valid' });
+        }
+
+        const student = await Student.findByPk(id);
+        if (student === null) {
+            return res.status(400).json({ msg: 'User not found' });
+        }
+        const { email, name } = student;
+
+        student.destroy({ where: { id } });
+
+        return res.json({
+            email,
+            name,
+            msg: 'User deleted',
+        });
     }
 }
 

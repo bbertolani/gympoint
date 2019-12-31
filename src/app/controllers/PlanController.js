@@ -4,9 +4,15 @@ import Plan from '../models/Plan';
 class PlanController {
     async store(req, res) {
         const schema = Yup.object().shape({
-            title: Yup.string().required(),
-            duration: Yup.number().required(),
-            price: Yup.number().required(),
+            title: Yup.string()
+                .min(4)
+                .required(),
+            duration: Yup.number()
+                .min(1)
+                .required(),
+            price: Yup.number()
+                .min(1)
+                .required(),
         });
 
         if (!(await schema.isValid(req.body))) {
@@ -41,7 +47,7 @@ class PlanController {
     async delete(req, res) {
         const { id } = req.params;
         const schema = Yup.object().shape({
-            id: Yup.string().required(),
+            id: Yup.number().required(),
         });
 
         if (!(await schema.isValid(req.params))) {
@@ -64,12 +70,25 @@ class PlanController {
     }
 
     async update(req, res) {
+        if (Object.keys(req.body).length === 0) {
+            return res.status(400).json({ msg: 'No data' });
+        }
         const { id } = req.params;
         const schema = Yup.object().shape({
-            id: Yup.string().required(),
+            id: Yup.number().required(),
         });
 
         if (!(await schema.isValid(req.params))) {
+            return res.status(400).json({ error: 'Input is not valid' });
+        }
+
+        const arg = Yup.object().shape({
+            title: Yup.string().min(4),
+            duration: Yup.number().min(1),
+            price: Yup.number().min(1),
+        });
+
+        if (!(await arg.isValid(req.body))) {
             return res.status(400).json({ error: 'Input is not valid' });
         }
 
