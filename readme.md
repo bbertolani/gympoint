@@ -1,10 +1,12 @@
 # Gympoint Project - Rocketseat
 
-This is a project developer while I'm a student of Rocketseat Bootcamp
+![](https://img.shields.io/github/commit-activity/w/bbertolani/gympoint)
+
+This is a project developed while I'm a student of Rocketseat Bootcamp
 
 ## Getting Started
 
-In progress
+Run `<yarn dev>` to get a server listen on port 3333
 
 ### Prerequisites
 
@@ -24,7 +26,7 @@ In progress
 
 ## Built With
 
-In progress
+Nodejs
 
 ## Contributing
 
@@ -44,6 +46,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* [Trello Board](https://trello.com/b/fJQRXr9W/bootcamp-rocketseat) with all task used to create this project.
+* Thanks for all members of [Rocketseat](https://rocketseat.com.br/)
