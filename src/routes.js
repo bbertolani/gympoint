@@ -13,6 +13,8 @@ routes.get('/', (req, res) => {
 });
 
 routes.post('/sessions', SessionController.store);
+routes.post('/students/:id/checkin', CheckinController.store);
+routes.get('/students/:id/checkin', CheckinController.list);
 
 routes.use(auth);
 
@@ -25,9 +27,4 @@ routes.post('/plans', PlanController.store);
 routes.get('/plans', PlanController.list);
 routes.put('/plans/:id', PlanController.update);
 routes.delete('/plans/:id', PlanController.delete);
-
-routes.post('/students/:id/checkin', CheckinController.store);
-routes.get('/students/:id/checkin', CheckinController.list);
-// routes.put('/plans/:id', PlanController.update);
-// routes.delete('/plans/:id', PlanController.delete);
 export default routes;
