@@ -5,6 +5,7 @@ import SessionController from './app/controllers/SessionController';
 import PlanController from './app/controllers/PlanController';
 import auth from './app/middlewares/auth';
 import CheckinController from './app/controllers/CheckinController';
+import MembershipController from './app/controllers/MembershipController';
 
 const routes = new Router();
 
@@ -27,4 +28,10 @@ routes.post('/plans', PlanController.store);
 routes.get('/plans', PlanController.list);
 routes.put('/plans/:id', PlanController.update);
 routes.delete('/plans/:id', PlanController.delete);
+
+routes.post('/membership', MembershipController.store);
+routes.get('/membership', MembershipController.list);
+routes.put('/membership/:id', MembershipController.update);
+routes.delete('/membership/:id', MembershipController.delete);
+
 export default routes;
