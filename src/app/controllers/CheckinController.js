@@ -12,7 +12,7 @@ class CheckinController {
                 .min(1)
                 .required(),
         });
-        if (!schema.isValid(req.params)) {
+        if (!(await schema.isValid(req.params))) {
             return res.status(400).json({ msg: 'Student ID not provided' });
         }
 
