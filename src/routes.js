@@ -4,6 +4,7 @@ import StudentController from './app/controllers/StudentController';
 import SessionController from './app/controllers/SessionController';
 import PlanController from './app/controllers/PlanController';
 import auth from './app/middlewares/auth';
+import CheckinController from './app/controllers/CheckinController';
 
 const routes = new Router();
 
@@ -25,4 +26,8 @@ routes.get('/plans', PlanController.list);
 routes.put('/plans/:id', PlanController.update);
 routes.delete('/plans/:id', PlanController.delete);
 
+routes.post('/students/:id/checkin', CheckinController.store);
+routes.get('/students/:id/checkin', CheckinController.list);
+// routes.put('/plans/:id', PlanController.update);
+// routes.delete('/plans/:id', PlanController.delete);
 export default routes;
