@@ -1,8 +1,9 @@
 import * as Yup from 'yup';
-import { addMonths } from 'date-fns';
+import { addMonths, format, parseISO } from 'date-fns';
 import Plan from '../models/Plan';
 import Student from '../models/Student';
 import Membership from '../models/Membership';
+import Mail from '../../lib/Mail';
 
 class MembershipController {
     async store(req, res) {
@@ -37,7 +38,7 @@ class MembershipController {
             return res.status(400).json({ msg: 'Plan not found' });
         }
 
-        const planPrice = planExist.price * planExist.duration;
+        const totalPrice = planExist.price * planExist.duration;
 
         // add months
         const end_date = addMonths(
@@ -48,11 +49,23 @@ class MembershipController {
         const membership = await Membership.create({
             student_id,
             plan_id,
-            price: planPrice,
+            price: totalPrice,
             start_date,
             end_date,
         });
 
+        await Mail.sendMail({
+            to: `${studentExist.name} <${studentExist.email}>`,
+            subject: 'Inscrição concluida com Sucesso',
+            template: 'membership_activation',
+            context: {
+                name: studentExist.name,
+                plan: planExist.title,
+                start_date: format(parseISO(start_date), 'dd/MMMM/yyyy'),
+                end_date: format(end_date, 'dd/MMMM/yyyy'),
+                totalPrice,
+            },
+        });
         return res.json({
             membership,
         });
