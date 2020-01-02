@@ -46,5 +46,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* [Trello Board](https://trello.com/b/fJQRXr9W/bootcamp-rocketseat) with all task used to create this project.
+* [Trello Board](http://bit.ly/2SJtAwJ) with all task used to create this project.
 * Thanks for all members of [Rocketseat](https://rocketseat.com.br/)
