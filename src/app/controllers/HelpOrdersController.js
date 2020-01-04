@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
 import Student from '../models/Student';
 import HelpOrder from '../models/HelpOrders';
-import Mail from '../../lib/Mail';
+import Queue from '../../lib/Queue';
+import QuestionMail from '../jobs/QuestionMail';
 
 class HelpOrdersController {
     async storeOrder(req, res) {
@@ -37,15 +38,8 @@ class HelpOrdersController {
             question,
         });
 
-        Mail.sendMail({
-            to: `${studentExist.name} <${studentExist.email}>`,
-            subject: 'Sua pergunta foi enviado com sucesso',
-            template: 'question_sent',
-            context: {
-                name: studentExist.name,
-                question,
-            },
-        });
+        await Queue.add(QuestionMail.key, { studentExist, question });
+
         return res.status(200).json({
             helpOrder,
         });
@@ -113,19 +107,10 @@ class HelpOrdersController {
             return res.status(400).json({ error: 'Question not found' });
         }
 
+        await Queue.add(AnswerMail.key, { helpOrder, answer });
+
         const answer_at = new Date();
         await helpOrder.update({ answer, answer_at });
-
-        Mail.sendMail({
-            to: `${helpOrder.student.name} <${helpOrder.student.email}>`,
-            subject: 'Sua pergunta foi respondida',
-            template: 'question_answer',
-            context: {
-                name: helpOrder.student.name,
-                answer,
-                question: helpOrder.question,
-            },
-        });
 
         return res.json({ helpOrder, msg: 'Your question was answer' });
     }
