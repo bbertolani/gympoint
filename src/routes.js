@@ -6,6 +6,7 @@ import PlanController from './app/controllers/PlanController';
 import auth from './app/middlewares/auth';
 import CheckinController from './app/controllers/CheckinController';
 import MembershipController from './app/controllers/MembershipController';
+import HelpOrdersController from './app/controllers/HelpOrdersController';
 
 const routes = new Router();
 
@@ -33,5 +34,9 @@ routes.post('/membership', MembershipController.store);
 routes.get('/membership', MembershipController.list);
 routes.put('/membership/:id', MembershipController.update);
 routes.delete('/membership/:id', MembershipController.delete);
+
+routes.post('/students/:id/help-orders', HelpOrdersController.storeOrder);
+routes.get('/students/:id/help-orders', HelpOrdersController.listOrder);
+routes.put('/help-orders/:id/answer', HelpOrdersController.answer);
 
 export default routes;
