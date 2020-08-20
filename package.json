@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@sentry/node": "5.10.2",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^5.0.0",
     "bee-queue": "^1.2.2",
     "date-fns": "^2.8.1",
     "express": "^4.17.1",
